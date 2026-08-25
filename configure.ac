@@ -122,18 +122,6 @@ AC_ARG_ENABLE(
         [--disable-conf],
         [conf, the stdin-based frontend (default=auto)])])
 AC_SUBST([enable_conf], [${enable_conf:-auto}])
-AC_ARG_ENABLE(
-    [mconf],
-    [AS_HELP_STRING(
-        [--disable-mconf],
-        [mconf, the traditional ncurses-based frontend (default=auto)])])
-AC_SUBST([enable_mconf], [${enable_mconf:-auto}])
-AC_ARG_ENABLE(
-    [nconf],
-    [AS_HELP_STRING(
-        [--disable-nconf],
-        [nconf, the modern ncurses-based frontend (default=auto)])])
-AC_SUBST([enable_nconf], [${enable_nconf:-auto}])
 
 AC_ARG_ENABLE(
     [frontends],
@@ -142,7 +130,7 @@ AC_ARG_ENABLE(
         [enables only the set of frontends in comma-separated 'list'
          (default: auto selection), takes precedence over all
          --enable-*conf, above])],
-    [for f in conf mconf nconf gconf qconf; do
+    [for f in conf; do
         AS_CASE(
             ["$enableval"],
             [yes],      [eval enable_$f=yes],
@@ -161,7 +149,6 @@ AC_SUBST([kf_CFLAGS], ["$wall_CFLAGS $werror_CFLAGS"])
 #----------------------------------------
 # Dependencies that will be needed, depending on the frontends
 AS_CASE(
-    ["$enable_mconf":"$enable_nconf"],
     [*yes*],  [need_curses=yes],
     [*auto*], [need_curses=auto],
               [need_curses=no])
@@ -235,49 +222,6 @@ AC_SUBST([intl_CPPFLAGS])
 AC_SUBST([intl_LIBS])
 
 #----------------------------------------
-# Check for ncurses, for the mconf & nconf frontends
-AS_IF(
-    [test "$need_curses" = "yes" -o "$need_curses" = "auto"],
-    [AC_SUBST([ncurses_mconf_CPPFLAGS])
-     AC_SUBST([ncurses_LIBS])
-     LIBS_old="$LIBS"
-     LIBS=
-     AC_CHECK_HEADERS(
-        [ncursesw/curses.h ncurses/ncurses.h ncurses/curses.h ncurses.h curses.h],
-        [CURSES_LOC=$ac_header
-         ncurses_mconf_CPPFLAGS=-DCURSES_LOC=\\\"$ac_header\\\"
-         break # Stupid syntax-coloring in vim: "])
-     AS_IF(
-        [test -z "$CURSES_LOC"],
-        [AS_IF(
-            [test "$need_curses" = "yes"],
-            [AC_MSG_ERROR([could not find curses headers (frontends: mconf/nconf)])],
-            [has_curses=no])])
-     AS_CASE(
-        [$CURSES_LOC],
-        [ncursesw/*],[ncurses_mconf_CPPFLAGS="$ncurses_mconf_CPPFLAGS -DNCURSES_WIDECHAR=1"])
-     AC_SEARCH_LIBS(
-        [setupterm],
-        [tinfo],
-        [break])
-     AC_SEARCH_LIBS(
-        [initscr],
-        [ncursesw ncurses curses],
-        [ac_ct_curses_lib_found=yes; break])
-     AS_IF(
-        [test -z "$ac_ct_curses_lib_found"],
-        [AS_IF(
-            [test "$need_curses" = "yes"],
-            [AC_MSG_ERROR([could not find curses library (frontends: mconf/nconf)])],
-            [has_curses=no])])
-     ncurses_LIBS="$LIBS"
-     LIBS=$LIBS_old])
-
-AS_IF(
-    [test "$has_curses" = "no" ],
-    [enable_mconf=no; enable_nconf=no])
-
-#----------------------------------------
 # Check for libpanel and libmenu, for the nconf frontend
 AS_IF(
     [test "$need_panel_menu" = "yes" -o "$need_panel_menu" = "auto"],
@@ -321,37 +265,16 @@ AS_IF(
 #----------------------------------------
 # Per-frontends extra libraries
 AC_ARG_VAR([conf_EXTRA_LIBS],  [Extra libraries to build the conf frontend] )
-AC_ARG_VAR([mconf_EXTRA_LIBS], [Extra libraries to build the mconf frontend])
-AC_ARG_VAR([nconf_EXTRA_LIBS], [Extra libraries to build the nconf frontend])
 
 #---------------------------------------------------------------------------
 # Now, we know what frontends to enable
 AS_IF([test "$enable_conf"  = "auto"], [enable_conf=yes ])
-AS_IF([test "$enable_mconf" = "auto"], [enable_mconf=yes])
-AS_IF([test "$enable_nconf" = "auto"], [enable_nconf=yes])
-
-#----------------------------------------
-# Check if the lxdialog library should be built
-AS_IF(
-    [test "$enable_mconf" = "yes"],
-    [need_lxdialog=yes],
-    [need_lxdialog=no])
-
 
 #----------------------------------------
 # Setup automake conditional build
 AM_CONDITIONAL(
     [COND_conf],
     [test "$enable_conf" = "yes"])
-AM_CONDITIONAL(
-    [COND_mconf],
-    [test "$enable_mconf" = "yes"])
-AM_CONDITIONAL(
-    [COND_nconf],
-    [test "$enable_nconf" = "yes"])
-AM_CONDITIONAL(
-    [COND_lxdialog],
-    [test "$need_lxdialog" = "yes"])
 AM_CONDITIONAL(
     [COND_utils],
     [test "$enable_utils" = "yes"])
@@ -369,8 +292,6 @@ AC_SUBST(
 # Pretty-print the configuration settings
 [fe_list=]
 AS_IF([test "$enable_conf"  = "yes"], [fe_list="$fe_list conf" ])
-AS_IF([test "$enable_mconf" = "yes"], [fe_list="$fe_list mconf"])
-AS_IF([test "$enable_nconf" = "yes"], [fe_list="$fe_list nconf"])
 # The meta frontend is handled separatly, below, because we do not
 # want it in the list of tools, kcfg_list.
 

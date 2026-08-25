@@ -112,31 +112,6 @@ pkgconfig_DATA = libs/parser/kconfig-parser.pc
 DISTCLEANFILES += libs/parser/kconfig-parser.pc
 EXTRA_DIST += libs/parser/kconfig-parser.pc.in
 
-#--------------------------
-# lxdialog lib (for mconf)
-if COND_lxdialog
-
-noinst_LIBRARIES += libs/lxdialog/libkconfig-lxdialog.a
-
-libs_lxdialog_libkconfig_lxdialog_a_SOURCES = \
-	libs/lxdialog/checklist.c \
-	libs/lxdialog/dialog.h \
-	libs/lxdialog/inputbox.c \
-	libs/lxdialog/menubox.c \
-	libs/lxdialog/textbox.c \
-	libs/lxdialog/util.c \
-	libs/lxdialog/yesno.c
-libs_lxdialog_libkconfig_lxdialog_a_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
-	$(ncurses_mconf_CPPFLAGS) \
-	$(intl_CPPFLAGS)
-libs_lxdialog_liblxdialog_a_CFLAGS = \
-	$(AM_CFLAGS) \
-	$(kf_CFLAGS)
-
-endif # COND_lxdialog
-
-
 #===============================================================================
 # Frontends
 
@@ -160,54 +135,6 @@ frontends_conf_kconfig_conf_LDADD = \
 	$(conf_EXTRA_LIBS)
 
 endif # COND_conf
-
-#--------------------------
-# mconf frontend
-if COND_mconf
-
-bin_PROGRAMS += frontends/mconf/kconfig-mconf
-
-frontends_mconf_kconfig_mconf_SOURCES = frontends/mconf/mconf.c
-frontends_mconf_kconfig_mconf_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
-	$(ncurses_mconf_CPPFLAGS) \
-	$(intl_CPPFLAGS) \
-	-I$(top_srcdir)/libs \
-	-I$(top_srcdir)/libs/parser
-frontends_mconf_kconfig_mconf_CFLAGS = \
-	$(AM_CFLAGS) \
-	$(kf_CFLAGS)
-frontends_mconf_kconfig_mconf_LDADD = \
-	$(top_builddir)/libs/parser/libkconfig-parser.la \
-	$(top_builddir)/libs/lxdialog/libkconfig-lxdialog.a \
-	$(intl_LIBS) $(ncurses_LIBS) $(mconf_EXTRA_LIBS)
-
-endif # COND_mconf
-
-#--------------------------
-# nconf frontend
-if COND_nconf
-
-bin_PROGRAMS += frontends/nconf/kconfig-nconf
-
-frontends_nconf_kconfig_nconf_SOURCES = \
-	frontends/nconf/nconf.c \
-	frontends/nconf/nconf.gui.c \
-	frontends/nconf/nconf.h
-frontends_nconf_kconfig_nconf_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
-	$(intl_CPPFLAGS) \
-	$(ncurses_nconf_CPPFLAGS) \
-	-I$(top_srcdir)/libs/parser
-frontends_nconf_kconfig_nconf_CFLAGS = \
-	$(AM_CFLAGS) \
-	$(kf_CFLAGS)
-frontends_nconf_kconfig_nconf_LDADD = \
-	$(top_builddir)/libs/parser/libkconfig-parser.la \
-	$(intl_LIBS) $(ncurses_panel_menu_LIBS) $(ncurses_LIBS) \
-	$(nconf_EXTRA_LIBS)
-
-endif # COND_nconf
 
 #===============================================================================
 # Utilities

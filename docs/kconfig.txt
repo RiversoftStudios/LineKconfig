@@ -2,10 +2,6 @@ This file contains some assistance for using "make *config".
 
 Use "make help" to list all of the possible configuration targets.
 
-The xconfig ('qconf') and menuconfig ('mconf') programs also
-have embedded help text.  Be sure to check it for navigation,
-search, and other general help text.
-
 ======================================================================
 General
 --------------------------------------------------

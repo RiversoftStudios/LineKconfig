@@ -1,4 +1,4 @@
-/* ANSI-C code produced by gperf version 3.2.1 */
+/* ANSI-C code produced by gperf version 3.3 */
 /* Command-line: gperf -t --output-file libs/parser/hconf.c -a -C -E -g -k '1,3,$' -p -t libs/parser/hconf.gperf  */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \

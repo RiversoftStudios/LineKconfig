@@ -22,5 +22,3 @@ libs/parser/kconfig-parser.pc
 utils/kconfig-tweak
 utils/kconfig-gettext
 frontends/conf/kconfig-conf
-frontends/mconf/kconfig-mconf
-frontends/nconf/kconfig-nconf
